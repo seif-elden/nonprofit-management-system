@@ -1,0 +1,13 @@
+# Build output
+target/
+
+# Submission zip (the source itself is committed)
+*.zip
+
+# Office / editor leftovers
+.~lock.*
+~$*
+.idea/
+*.iml
+nbproject/private/
+.DS_Store
