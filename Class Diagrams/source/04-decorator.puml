@@ -1,0 +1,23 @@
+@startuml 04-decorator
+!include style.iuml
+title Decorator Pattern - Documents and Tickets
+skinparam linetype ortho
+!include model.iuml
+remove *
+restore Document
+restore BasicReceipt
+restore VolunteerCertificate
+restore DocumentDecorator
+restore TaxInfoDecorator
+restore ThankYouNoteDecorator
+restore SignatureDecorator
+restore Ticket
+restore BasicTicket
+restore TicketDecorator
+restore VipDecorator
+restore MealDecorator
+note top of Document : <b>Component 1</b>: receipts and certificates
+note top of Ticket : <b>Component 2</b>: event tickets
+note bottom of TaxInfoDecorator : <b>Concrete Decorators</b>: render() = wrapped.render() + extra text
+note bottom of VipDecorator : <b>Concrete Decorators</b>: getPrice() = wrapped.getPrice() + extra
+@enduml

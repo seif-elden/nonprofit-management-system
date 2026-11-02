@@ -1,0 +1,31 @@
+@startuml 07-mvc-and-crud-lookups
+!include style.iuml
+title MVC Architecture and CRUD Lookup Tables
+skinparam linetype ortho
+!include model.iuml
+remove *
+restore Main
+restore MainController
+restore PersonController
+restore DonationController
+restore EventController
+restore VolunteerController
+restore BeneficiaryController
+restore LookupController
+restore View
+restore MainView
+restore PersonView
+restore DonationView
+restore EventView
+restore VolunteerView
+restore BeneficiaryView
+restore LookupView
+restore DatabaseManager
+restore GenericDAO
+restore LookupItem
+restore Skill
+restore ItemCategory
+restore ResourceCategory
+note top of View : <b>View</b>: the only layer that reads input and prints output
+note bottom of LookupItem : <b>CRUD lookup tables</b>: GenericDAO insert / findAll / findById / update / delete\nrows still in use cannot be deleted (LookupController.isInUse)
+@enduml

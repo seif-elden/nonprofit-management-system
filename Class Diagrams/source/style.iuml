@@ -1,0 +1,26 @@
+' Shared look for every diagram (course style: +/-/# visibility, «interface», «abstract»)
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam dpi 150
+skinparam defaultFontName "DejaVu Sans"
+skinparam defaultFontSize 12
+skinparam titleFontSize 18
+skinparam packageStyle rectangle
+skinparam nodesep 40
+skinparam ranksep 60
+skinparam class {
+  BackgroundColor #FFFFFF
+  BorderColor #222222
+  ArrowColor #222222
+  HeaderBackgroundColor #E8EEF7
+  StereotypeFontColor #444444
+}
+skinparam note {
+  BackgroundColor #FFF8DC
+  BorderColor #999999
+}
+skinparam package {
+  BorderColor #888888
+  FontColor #333333
+}
+hide circle

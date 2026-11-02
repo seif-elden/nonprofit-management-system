@@ -1,0 +1,14 @@
+@startuml 06-singleton
+!include style.iuml
+title Singleton Pattern - One Shared Data Store
+!include model.iuml
+remove *
+restore DatabaseManager
+restore GenericDAO
+restore Identifiable
+restore ActivityLog
+restore MainController
+restore LookupController
+restore PersonService
+note right of DatabaseManager : <b>Singleton</b>\nprivate constructor: no "new DatabaseManager()" outside\nstatic instance holds the only object\nsynchronized getInstance(): creates it once (lazy)\nand returns the same instance afterwards
+@enduml

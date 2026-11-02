@@ -1,0 +1,28 @@
+@startuml 05-factory-method
+!include style.iuml
+title Factory Method Pattern - Creating Donations and Events
+!include model.iuml
+remove *
+restore DonationHandler
+restore MonetaryDonationHandler
+restore InKindDonationHandler
+restore Donation
+restore MonetaryDonation
+restore InKindDonation
+restore DonationForm
+restore EventCreator
+restore FundraiserCreator
+restore WorkshopCreator
+restore OutreachCreator
+restore Event
+restore Fundraiser
+restore Workshop
+restore Outreach
+restore EventForm
+note top of DonationHandler : <b>Creator</b>: receiveDonation() = common workflow\ncreateDonation() = factory method
+note top of EventCreator : <b>Creator</b>: openEvent() = common workflow\ncreateEvent() = factory method
+note top of Donation : <b>Product</b>
+note top of Event : <b>Product</b>
+InKindDonationHandler -[hidden]down- EventForm
+MonetaryDonation -[hidden]down- EventCreator
+@enduml

@@ -1,0 +1,24 @@
+@startuml 03-observer
+!include style.iuml
+title Observer Pattern - Donations, Events and Distributions
+!include model.iuml
+remove *
+restore Subject
+restore Observer
+restore ChangeEvent
+restore ChangeType
+restore DonationService
+restore EventService
+restore DistributionService
+restore ReceiptObserver
+restore ThankYouObserver
+restore StatsObserver
+restore AttendeeNotificationObserver
+restore StockObserver
+restore ActivityLog
+restore NotificationService
+note top of Subject : <b>Subject</b> (publisher)
+note top of Observer : <b>Observer</b> (subscriber)\nupdate(source, change)
+note bottom of DonationService : <b>Concrete Subjects</b>\nevery change -> notifyObservers(new ChangeEvent(...))
+note bottom of ActivityLog : <b>Concrete Observers</b> subscribe themselves\n(constructor or watch() calls subject.addObserver(this))
+@enduml

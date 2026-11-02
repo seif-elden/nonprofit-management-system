@@ -1,0 +1,30 @@
+@startuml 02-strategy
+!include style.iuml
+title Strategy Pattern - Payment, Notification Channel and Impact Evaluation
+!include model.iuml
+remove *
+restore PaymentStrategy
+restore OnlinePayment
+restore CheckPayment
+restore CashPayment
+restore MonetaryDonation
+restore DonationController
+restore NotificationStrategy
+restore EmailStrategy
+restore SmsStrategy
+restore SocialMediaStrategy
+restore NotificationService
+restore Channel
+restore Message
+restore ImpactEvaluationStrategy
+restore FoodAidImpactStrategy
+restore EducationImpactStrategy
+restore ImpactEvaluator
+restore ImpactReport
+restore BeneficiaryController
+note top of PaymentStrategy : <b>Strategy 1 - payment</b>\nContext: MonetaryDonation\n(setPaymentStrategy at runtime)
+note top of NotificationStrategy : <b>Strategy 2 - communication channel</b>\nContext: NotificationService picks the\nstrategy from each recipient's preferred channel
+note top of ImpactEvaluationStrategy : <b>Strategy 3 - impact evaluation</b>\nContext: ImpactEvaluator (setStrategy)
+EducationImpactStrategy -[hidden]down- MonetaryDonation
+CheckPayment -[hidden]down- NotificationService
+@enduml

@@ -1,0 +1,7 @@
+@startuml 01-full-class-diagram
+!include style.iuml
+skinparam dpi 90
+skinparam linetype ortho
+title Hope Bridge Non-Profit Management System - Full Class Diagram (Phase 1)
+!include model.iuml
+@enduml
