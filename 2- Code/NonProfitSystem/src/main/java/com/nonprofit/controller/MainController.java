@@ -1,22 +1,9 @@
 package com.nonprofit.controller;
 
-import com.nonprofit.model.beneficiary.DistributionService;
+import com.nonprofit.ApplicationServices;
 import com.nonprofit.model.persistence.DatabaseManager;
-import com.nonprofit.model.donation.DonationService;
-import com.nonprofit.model.event.EventService;
-import com.nonprofit.model.notification.channels.EmailStrategy;
-import com.nonprofit.model.notification.NotificationService;
-import com.nonprofit.model.notification.channels.SmsStrategy;
-import com.nonprofit.model.notification.channels.SocialMediaStrategy;
-import com.nonprofit.model.observer.AttendeeNotificationObserver;
-import com.nonprofit.model.observer.ReceiptObserver;
-import com.nonprofit.model.observer.StatsObserver;
-import com.nonprofit.model.observer.StockObserver;
-import com.nonprofit.model.observer.ThankYouObserver;
-import com.nonprofit.model.notification.Channel;
 import com.nonprofit.model.people.Notification;
 import com.nonprofit.model.people.Person;
-import com.nonprofit.model.people.PersonService;
 import com.nonprofit.model.volunteer.VolunteerService;
 import com.nonprofit.view.BeneficiaryView;
 import com.nonprofit.view.DonationView;
@@ -44,36 +31,14 @@ public class MainController {
 
     public MainController(MainView view) {
         this.view = view;
-        this.db = DatabaseManager.getInstance();
-
-        // Strategy: one delivery algorithm per channel
-        NotificationService notificationService = new NotificationService();
-        notificationService.registerStrategy(Channel.EMAIL, new EmailStrategy());
-        notificationService.registerStrategy(Channel.SMS, new SmsStrategy());
-        notificationService.registerStrategy(Channel.SOCIAL, new SocialMediaStrategy());
-
-        // Observer: subjects
-        DonationService donationService = new DonationService();
-        EventService eventService = new EventService();
-        DistributionService distributionService = new DistributionService();
-        PersonService personService = new PersonService();
-        VolunteerService volunteerService = new VolunteerService();
-
-        // Observer: each observer subscribes itself in its constructor
-        new ReceiptObserver(donationService);
-        new ThankYouObserver(donationService, notificationService);
-        StatsObserver statsObserver = new StatsObserver(donationService);
-        AttendeeNotificationObserver attendeeObserver = new AttendeeNotificationObserver(eventService, notificationService);
-        new StockObserver(distributionService);
-        db.getActivityLog().watch(donationService);
-        db.getActivityLog().watch(eventService);
-        db.getActivityLog().watch(distributionService);
-
-        this.personController = new PersonController(new PersonView(), personService);
-        this.donationController = new DonationController(new DonationView(), donationService, statsObserver);
-        this.eventController = new EventController(new EventView(), eventService, personService, attendeeObserver);
-        this.volunteerController = new VolunteerController(new VolunteerView(), volunteerService);
-        this.beneficiaryController = new BeneficiaryController(new BeneficiaryView(), distributionService);
+        ApplicationServices services = ApplicationServices.getInstance();
+        this.db = services.db;
+        this.personController = new PersonController(new PersonView(), services.people);
+        this.donationController = new DonationController(new DonationView(), services.donations, services.stats);
+        this.eventController = new EventController(new EventView(), services.events, services.people,
+                services.attendeeNotifications);
+        this.volunteerController = new VolunteerController(new VolunteerView(), services.volunteers);
+        this.beneficiaryController = new BeneficiaryController(new BeneficiaryView(), services.distributions);
         this.lookupController = new LookupController(new LookupView());
     }
 

@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+  <title th:text="${title + ' · Hope Bridge'}">Hope Bridge</title>
+  <meta name="description" content="Hope Bridge non-profit management — people, donations, events, and community support.">
+  <link rel="stylesheet" th:href="@{/css/app.css}">
+  <script defer th:src="@{/app.js}">
+</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<aside class="sidebar">
+  <a class="brand" th:href="@{/}">
+<span class="brand-icon" aria-hidden="true">h<span>✦</span>
+</span>
+<span>hope bridge<small>FOUNDATION WORKSPACE</small>
+</span>
+</a>
+  <p class="nav-label">YOUR WORKSPACE</p>
+  <nav aria-label="Main navigation">
+    <a th:each="nav : ${ {'dashboard':'Overview','people':'People & accounts','donations':'Donations','events':'Events','volunteers':'Volunteers','beneficiaries':'Beneficiary support','lookups':'Lookup tables','activity':'Activity & inbox'} }"
+       th:href="@{'/' + ${nav.key}}" th:classappend="${section == nav.key} ? 'active'" th:attr="aria-current=${section == nav.key ? 'page' : null}">
+<span class="nav-dot" aria-hidden="true">
+</span>
+<span th:text="${nav.value}">
+</span>
+<span class="nav-arrow" aria-hidden="true">↗</span>
+</a>
+  </nav>
+  <div class="sidebar-note">
+<span class="live-dot">
+</span> Local demo workspace<p>Every small action.<br>A lasting difference.</p>
+<small>Data is kept in memory and resets when the server restarts.</small>
+</div>
+  <div class="organization">
+<span>HB</span>
+<div>Hope Bridge Foundation<small>Community operations</small>
+</div>
+</div>
+</aside>
+<div class="workspace">
+<header class="topbar">
+<span>Workspace <span class="slash">/</span> <strong th:text="${title}">Overview</strong>
+</span>
+<a th:href="@{/activity}" class="inbox-link">Inbox <span aria-hidden="true">↗</span>
+</a>
+</header>
+<main id="main">
+  <div class="page-heading">
+<div>
+<p class="eyebrow">HOPE IN ACTION</p>
+<h1 th:text="${title}">Overview</h1>
+<p th:switch="${section}">
+<span th:case="'dashboard'">A little care, a bigger impact. Here’s your community at a glance.</span>
+<span th:case="'people'">The people at the heart of everything we do.</span>
+<span th:case="'donations'">Turn generosity into meaningful support.</span>
+<span th:case="'events'">Bring people together. Make good things happen.</span>
+<span th:case="'volunteers'">Connect willing hands with work that matters.</span>
+<span th:case="'beneficiaries'">Get the right support to the people who need it.</span>
+<span th:case="'lookups'">Keep your shared categories and skills organized.</span>
+<span th:case="*">Follow the work, and keep your community informed.</span>
+</p>
+</div>
+<span class="date-chip" th:text="${#temporals.format(today, 'dd MMM yyyy')}">
+</span>
+</div>
+  <div class="alert success" role="status" th:if="${success}" th:text="${success}">
+</div>
+  <div class="alert error" role="alert" th:if="${error}" th:text="${error}">
+</div>
+  <section th:if="${document}" class="panel document">
+<div class="panel-heading">
+<h2 th:text="${documentTitle}">Document</h2>
+<button type="button" class="button secondary" data-print>Print document</button>
+</div>
+<pre th:text="${document}">
+</pre>
+</section>
+
+  <section th:if="${section == 'dashboard'}">
+    <div class="welcome-banner">
+<div>
+<span class="pill">GOOD WORK STARTS HERE</span>
+<h2>Building bridges.<br>Changing lives.</h2>
+<p>One shared place to turn your community’s<br>generosity into everyday impact.</p>
+<a class="button light" th:href="@{/donations}">Record a donation <span>↗</span>
+</a>
+</div>
+<div class="bridge-art" aria-hidden="true">
+<span class="sun">
+</span>
+<span class="arch arch-one">
+</span>
+<span class="arch arch-two">
+</span>
+<span class="arch arch-three">
+</span>
+<span class="ground">
+</span>
+<span class="art-caption">TOGETHER, WE GO FURTHER</span>
+</div>
+</div>
+    <div class="stats">
+<article>
+<span class="stat-label">Total raised <span>↗</span>
+</span>
+<strong>
+<span th:text="${#numbers.formatDecimal(totalRaised, 1, 'COMMA', 0, 'POINT')}">0</span> <small>EGP</small>
+</strong>
+<p th:text="${donationCount + ' completed donations'}">
+</p>
+</article>
+<article>
+<span class="stat-label">Our community <span>◎</span>
+</span>
+<strong th:text="${peopleCount}">6</strong>
+<p>Donors, volunteers & families</p>
+</article>
+<article>
+<span class="stat-label">Community events <span>◷</span>
+</span>
+<strong th:text="${#lists.size(events)}">3</strong>
+<p>Opportunities to come together</p>
+</article>
+<article>
+<span class="stat-label">Resources in stock <span>▧</span>
+</span>
+<strong th:text="${totalStock}">220</strong>
+<p>Units ready to make a difference</p>
+</article>
+</div>
+    <div class="columns">
+<section class="panel">
+<div class="panel-heading">
+<h2>Campaign spotlight</h2>
+<span class="badge">Fundraising</span>
+</div>
+<article class="campaign" th:each="campaign : ${campaigns}">
+<div class="campaign-art" aria-hidden="true">❋</div>
+<p class="eyebrow">A WARMER TOMORROW</p>
+<h3 th:text="${campaign.title}">
+</h3>
+<p>Help our neighbors feel the warmth of community.</p>
+<progress max="100" th:value="${campaign.progress}" aria-label="Campaign funding progress">
+</progress>
+<div class="spread">
+<strong th:text="${#numbers.formatDecimal(campaign.raisedAmount, 1, 'COMMA', 0, 'POINT') + ' EGP raised'}">
+</strong>
+<span th:text="${#numbers.formatDecimal(campaign.progress, 1, 0) + '%'}">
+</span>
+</div>
+<small th:text="${'of ' + #numbers.formatDecimal(campaign.goalAmount, 1, 'COMMA', 0, 'POINT') + ' EGP goal'}">
+</small>
+</article>
+</section>
+<section class="panel">
+<div class="panel-heading">
+<h2>Coming together</h2>
+<a th:href="@{/events}">View events ↗</a>
+</div>
+<article class="event-row" th:each="event : ${events}">
+<div class="calendar">
+<small th:text="${#temporals.format(event.date, 'MMM')}">
+</small>
+<strong th:text="${#temporals.format(event.date, 'dd')}">
+</strong>
+</div>
+<div>
+<span class="tag" th:text="${event.type}">
+</span>
+<h3 th:text="${event.name}">
+</h3>
+<p th:text="${event.venue}">
+</p>
+</div>
+<span class="event-arrow" aria-hidden="true">↗</span>
+</article>
+</section>
+</div>
+    <section class="panel">
+<div class="panel-heading">
+<h2>Latest activity</h2>
+<a th:href="@{/activity}">View all ↗</a>
+</div>
+<p class="empty" th:if="${#lists.isEmpty(activity)}">Your story starts here. Record a donation or distribution to see it in your activity feed.</p>
+<p class="activity-line" th:each="entry, status : ${activity}" th:if="${status.index < 4}" th:text="${entry}">
+</p>
+</section>
+  </section>
+
+  <section th:if="${section == 'people'}">
+    <section class="panel">
+<div class="panel-heading">
+<h2>Community directory</h2>
+<form method="get" th:action="@{/people}" class="search">
+<label class="sr-only" for="search">Search by name</label>
+<input id="search" name="q" th:value="${q}" placeholder="Search by name…">
+<button class="button secondary">Search</button>
+</form>
+</div>
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Role</th>
+<th>Email</th>
+<th>Phone</th>
+<th>Channel</th>
+</tr>
+</thead>
+<tbody>
+<tr th:each="person : ${people}">
+<td>
+<strong th:text="${person.name}">
+</strong>
+<small th:text="${'#' + person.id}">
+</small>
+</td>
+<td>
+<span class="badge" th:text="${person.role}">
+</span>
+</td>
+<td th:text="${person.email}">
+</td>
+<td th:text="${person.phone}">
+</td>
+<td th:text="${person.preferredChannel}">
+</td>
+</tr>
+<tr th:if="${#lists.isEmpty(people)}">
+<td colspan="5" class="empty">No people match this search.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+    <div class="columns">
+<section class="panel">
+<h2>Add someone new</h2>
+<form method="post" th:action="@{/actions/person-create}">
+<input th:replace="~{fragments :: csrf}">
+<div class="form-grid">
+<label>Full name<input name="name" required maxlength="120" autocomplete="name">
+</label>
+<label>Role<select name="type">
+<option value="DONOR">Donor</option>
+<option value="VOLUNTEER">Volunteer</option>
+<option value="BENEFICIARY">Beneficiary</option>
+</select>
+</label>
+<label>Email<input type="email" name="email" required autocomplete="email">
+</label>
+<label>Phone<input name="phone" autocomplete="tel">
+</label>
+<label>Password<input type="password" name="password" required minlength="6" autocomplete="new-password">
+</label>
+<label>Household size (beneficiaries)<input type="number" name="familySize" value="1" min="1">
+</label>
+<label class="full">Address (beneficiaries)<input name="address" autocomplete="street-address">
+</label>
+<label>Skill (volunteers)<select name="skillId">
+<option value="0">No skill selected</option>
+<option th:each="skill : ${skills}" th:value="${skill.id}" th:text="${skill.name}">
+</option>
+</select>
+</label>
+<label>Availability (volunteers)<input name="availability" placeholder="e.g. Weekends">
+</label>
+</div>
+<button class="button">Add person <span>+</span>
+</button>
+</form>
+</section>
+<div>
+<section class="panel">
+<h2>Update contact details</h2>
+<form method="post" th:action="@{/actions/person-update}">
+<input th:replace="~{fragments :: csrf}">
+<label>Person<select th:replace="~{fragments :: personSelect}">
+</select>
+</label>
+<div class="form-grid">
+<label>Email<input type="email" name="email" required>
+</label>
+<label>Phone<input name="phone">
+</label>
+<label>Preferred channel<select name="channel">
+<option>EMAIL</option>
+<option>SMS</option>
+<option>SOCIAL</option>
+</select>
+</label>
+<label>Social handle<input name="social" placeholder="@handle">
+</label>
+</div>
+<button class="button secondary">Save contact</button>
+</form>
+</section>
+<section class="panel">
+<h2>Remove a person</h2>
+<p>People with linked donations, assignments, distributions, or event registrations are protected.</p>
+<form method="post" th:action="@{/actions/person-delete}" data-confirm="Remove this person from the directory?">
+<input th:replace="~{fragments :: csrf}">
+<label>Person<select th:replace="~{fragments :: personSelect}">
+</select>
+</label>
+<button class="button danger">Delete person</button>
+</form>
+</section>
+</div>
+</div>
+  </section>
+
+  <section th:if="${section == 'donations'}">
+    <div class="columns">
+<section class="panel">
+<h2>Record a donation</h2>
+<p>Payments are simulated for this demo. Use a demo reference for online payments.</p>
+<form method="post" th:action="@{/actions/donation}" data-donation-form>
+<input th:replace="~{fragments :: csrf}">
+<div class="form-grid">
+<label>Donor<select name="donorId" required>
+<option th:each="donor : ${donors}" th:value="${donor.id}" th:text="${donor.name}">
+</option>
+</select>
+</label>
+<label>Campaign<select name="campaignId" required>
+<option th:each="campaign : ${campaigns}" th:value="${campaign.id}" th:text="${campaign.title}">
+</option>
+</select>
+</label>
+<label>Donation type<select name="type" data-donation-type>
+<option value="monetary">Monetary</option>
+<option value="in-kind">In-kind</option>
+</select>
+</label>
+<label>Amount / estimated total value (EGP)<input type="number" name="amount" min="0.01" step="0.01" required>
+</label>
+</div>
+<fieldset data-donation-fields="monetary">
+<legend>Payment details</legend>
+<div class="form-grid">
+<label>Method<select name="payment">
+<option value="cash">Cash</option>
+<option value="check">Check</option>
+<option value="online">Online (demo)</option>
+</select>
+</label>
+<label>Staff name / check no. / demo reference<input name="paymentReference" required placeholder="e.g. Reception desk">
+</label>
+<label class="full">Bank name (required for checks)<input name="bank">
+</label>
+</div>
+</fieldset>
+<fieldset data-donation-fields="in-kind">
+<legend>In-kind details</legend>
+<div class="form-grid">
+<label class="full">Item description<input name="item" required>
+</label>
+<label>Quantity<input type="number" name="quantity" min="1" value="1" required>
+</label>
+<label>Item category<select name="categoryId">
+<option th:each="category : ${itemCategories}" th:value="${category.id}" th:text="${category.name}">
+</option>
+</select>
+</label>
+</div>
+</fieldset>
+<div th:replace="~{fragments :: receiptOptions}">
+</div>
+<button class="button">Record donation <span>↗</span>
+</button>
+</form>
+</section>
+<section class="panel">
+<h2>Campaign progress</h2>
+<article class="campaign compact" th:each="campaign : ${campaigns}">
+<span class="badge">Active campaign</span>
+<h3 th:text="${campaign.title}">
+</h3>
+<progress max="100" th:value="${campaign.progress}" aria-label="Campaign funding progress">
+</progress>
+<strong th:text="${#numbers.formatDecimal(campaign.raisedAmount, 1, 'COMMA', 2, 'POINT') + ' EGP raised'}">
+</strong>
+<p th:text="${'Goal: ' + #numbers.formatDecimal(campaign.goalAmount, 1, 'COMMA', 0, 'POINT') + ' EGP'}">
+</p>
+</article>
+<div class="mini-total">
+<small>Organization total</small>
+<strong th:text="${#numbers.formatDecimal(totalRaised, 1, 'COMMA', 2, 'POINT') + ' EGP'}">
+</strong>
+</div>
+</section>
+</div>
+    <section class="panel">
+<h2>Donation history</h2>
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+<th>ID / date</th>
+<th>Donor</th>
+<th>Campaign</th>
+<th>Details</th>
+<th>Value (EGP)</th>
+</tr>
+</thead>
+<tbody>
+<tr th:each="donation : ${donations}">
+<td th:text="${'#' + donation.id + ' · ' + donation.date}">
+</td>
+<td th:text="${donation.donor.name}">
+</td>
+<td th:text="${donation.campaign.title}">
+</td>
+<td th:text="${donation.summary}">
+</td>
+<td th:text="${#numbers.formatDecimal(donation.value, 1, 'COMMA', 2, 'POINT')}">
+</td>
+</tr>
+<tr th:if="${#lists.isEmpty(donations)}">
+<td colspan="5" class="empty">No donations yet. Record the first contribution above.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+    <div class="columns">
+<section class="panel">
+<h2>Reissue a receipt</h2>
+<form method="post" th:action="@{/actions/receipt}">
+<input th:replace="~{fragments :: csrf}">
+<label>Donation<select name="donationId" required>
+<option th:each="donation : ${donations}" th:value="${donation.id}" th:text="${'#' + donation.id + ' — ' + donation.donor.name}">
+</option>
+</select>
+</label>
+<div th:replace="~{fragments :: receiptOptions}">
+</div>
+<button class="button secondary" th:disabled="${#lists.isEmpty(donations)}">Generate receipt</button>
+</form>
+</section>
+<section class="panel">
+<h2>Annual donation statement</h2>
+<form method="post" th:action="@{/actions/tax}">
+<input th:replace="~{fragments :: csrf}">
+<label>Donor<select name="donorId">
+<option th:each="donor : ${donors}" th:value="${donor.id}" th:text="${donor.name}">
+</option>
+</select>
+</label>
+<label>Year<input name="year" type="number" min="1" th:value="${year}" required>
+</label>
+<button class="button secondary">Generate statement</button>
+</form>
+</section>
+</div>
+  </section>
+
+  <section th:if="${section == 'events'}">
+    <div class="event-grid">
+<article class="panel event-card" th:each="event : ${events}">
+<div class="spread">
+<span class="badge" th:text="${event.type}">
+</span>
+<span class="status" th:text="${event.status}">
+</span>
+</div>
+<h2 th:text="${event.name}">
+</h2>
+<p th:text="${event.date + ' · ' + event.venue}">
+</p>
+<p th:text="${event.details}">
+</p>
+<div class="event-meta">
+<span th:text="${#lists.size(event.attendees) + ' / ' + event.capacity + ' registered'}">
+</span>
+<strong th:text="${event.ticketPrice == 0 ? 'Free entry' : event.ticketPrice + ' EGP'}">
+</strong>
+</div>
+<small th:text="${'Required skill: ' + (event.requiredSkill == null ? 'None' : event.requiredSkill.name)}">
+</small>
+</article>
+</div>
+    <div class="columns">
+<section class="panel">
+<h2>Create an event</h2>
+<form method="post" th:action="@{/actions/event-create}" data-event-form>
+<input th:replace="~{fragments :: csrf}">
+<div class="form-grid">
+<label class="full">Event name<input name="name" required>
+</label>
+<label>Type<select name="type" data-event-type>
+<option>Fundraiser</option>
+<option>Workshop</option>
+<option>Outreach</option>
+</select>
+</label>
+<label>Date<input type="date" name="date" th:min="${today}" required>
+</label>
+<label class="full">Venue<input name="venue" required>
+</label>
+<label>Capacity<input name="capacity" type="number" min="1" value="30" required>
+</label>
+<label>Ticket price (EGP)<input name="price" type="number" min="0" step="0.01" value="0" required>
+</label>
+<label class="full">Required volunteer skill<select name="skillId">
+<option value="0">No skill required</option>
+<option th:each="skill : ${skills}" th:value="${skill.id}" th:text="${skill.name}">
+</option>
+</select>
+</label>
+</div>
+<fieldset data-event-fields="Fundraiser">
+<legend>Fundraiser</legend>
+<label>Fundraising target (EGP)<input name="target" type="number" min="0.01" step="0.01" required>
+</label>
+</fieldset>
+<fieldset data-event-fields="Workshop">
+<legend>Workshop</legend>
+<label>Trainer<input name="trainer" required>
+</label>
+<label>Topic<input name="topic" required>
+</label>
+</fieldset>
+<fieldset data-event-fields="Outreach">
+<legend>Outreach</legend>
+<label>Area served<input name="location" required>
+</label>
+<label>Team size<input name="teamSize" type="number" min="1" required>
+</label>
+</fieldset>
+<button class="button">Create event <span>+</span>
+</button>
+</form>
+</section>
+<div>
+<section class="panel">
+<h2>Manage an event</h2>
+<form method="post" th:action="@{/actions/event-update}" data-operation-form>
+<input th:replace="~{fragments :: csrf}">
+<label>Event<select th:replace="~{fragments :: eventSelect}">
+</select>
+</label>
+<label>Action<select name="operation" data-operation>
+<option value="register">Register attendee</option>
+<option value="attendance">Mark attendance</option>
+<option value="date">Change date</option>
+<option value="venue">Change venue</option>
+<option value="remind">Send reminders</option>
+<option value="complete">Complete & credit volunteer hours</option>
+<option value="cancel">Cancel event</option>
+</select>
+</label>
+<fieldset data-operation-fields="register attendance">
+<legend>Attendee</legend>
+<label>Person<select th:replace="~{fragments :: personSelect}">
+</select>
+</label>
+</fieldset>
+<fieldset data-operation-fields="date">
+<legend>Reschedule</legend>
+<label>New date<input name="date" type="date" th:min="${today}" required>
+</label>
+</fieldset>
+<fieldset data-operation-fields="venue">
+<legend>New location</legend>
+<label>Venue<input name="venue" required>
+</label>
+</fieldset>
+<fieldset data-operation-fields="complete">
+<legend>Volunteer hours</legend>
+<label>Hours per assigned volunteer<input name="hours" type="number" min="0" step="0.25" value="0" required>
+</label>
+</fieldset>
+<button class="button secondary">Apply action</button>
+</form>
+</section>
+<section class="panel">
+<h2>Issue a ticket</h2>
+<form method="post" th:action="@{/actions/ticket}">
+<input th:replace="~{fragments :: csrf}">
+<label>Event<select th:replace="~{fragments :: eventSelect}">
+</select>
+</label>
+<label>Attendee<select th:replace="~{fragments :: personSelect}">
+</select>
+</label>
+<div class="checks">
+<label>
+<input type="checkbox" name="vip"> VIP seating (+250 EGP)</label>
+<label>
+<input type="checkbox" name="meal"> Dinner (+150 EGP)</label>
+</div>
+<button class="button secondary">Generate ticket</button>
+</form>
+</section>
+</div>
+</div>
+  </section>
+
+  <section th:if="${section == 'volunteers'}">
+    <section class="panel">
+<h2>People who show up</h2>
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+<th>Volunteer</th>
+<th>Skills</th>
+<th>Availability</th>
+<th>Total hours</th>
+</tr>
+</thead>
+<tbody>
+<tr th:each="volunteer : ${volunteers}">
+<td th:text="${volunteer.name}">
+</td>
+<td>
+<span class="tag" th:each="skill : ${volunteer.skills}" th:text="${skill.name}">
+</span>
+</td>
+<td th:text="${#strings.listJoin(volunteer.availability, ', ')}">
+</td>
+<td th:text="${volunteer.totalHours}">
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+    <div class="columns">
+<section class="panel">
+<h2>Find the right match</h2>
+<form method="get" th:action="@{/volunteers}">
+<label>Event<select th:replace="~{fragments :: eventSelect}">
+</select>
+</label>
+<button class="button secondary">Suggest volunteers</button>
+</form>
+<div th:if="${selectedEvent != null}">
+<h3 th:text="${'Matches for ' + selectedEvent.name}">
+</h3>
+<p>Qualified volunteers, with preferred event types first.</p>
+<p class="empty" th:if="${#lists.isEmpty(suggestions)}">No qualified volunteers yet.</p>
+<p th:each="volunteer : ${suggestions}" th:text="${volunteer.name}">
+</p>
+</div>
+<hr>
+<h2>Assign a volunteer</h2>
+<form method="post" th:action="@{/actions/assignment}">
+<input th:replace="~{fragments :: csrf}">
+<label>Volunteer<select th:replace="~{fragments :: volunteerSelect}">
+</select>
+</label>
+<label>Event<select th:replace="~{fragments :: eventSelect}">
+</select>
+</label>
+<label>Role<input name="role" placeholder="e.g. Teaching assistant" required>
+</label>
+<button class="button">Assign volunteer</button>
+</form>
+</section>
+<div>
+<section class="panel">
+<h2>Log volunteer hours</h2>
+<form method="post" th:action="@{/actions/hours}">
+<input th:replace="~{fragments :: csrf}">
+<label>Assignment<select name="assignmentId" required>
+<option th:each="assignment : ${assignments}" th:value="${assignment.id}" th:text="${assignment.volunteer.name + ' — ' + assignment.event.name}">
+</option>
+</select>
+</label>
+<label>Additional hours<input name="hours" type="number" min="0.25" step="0.25" required>
+</label>
+<button class="button secondary" th:disabled="${#lists.isEmpty(assignments)}">Log hours</button>
+</form>
+</section>
+<section class="panel">
+<h2>A little recognition</h2>
+<p>Issue a signed certificate for a volunteer with recorded hours.</p>
+<form method="post" th:action="@{/actions/certificate}">
+<input th:replace="~{fragments :: csrf}">
+<label>Volunteer<select th:replace="~{fragments :: volunteerSelect}">
+</select>
+</label>
+<button class="button secondary">Generate certificate</button>
+</form>
+</section>
+</div>
+</div>
+    <section class="panel">
+<h2>Assignments</h2>
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+<th>Volunteer</th>
+<th>Event</th>
+<th>Role</th>
+<th>Hours</th>
+</tr>
+</thead>
+<tbody>
+<tr th:each="assignment : ${assignments}">
+<td th:text="${assignment.volunteer.name}">
+</td>
+<td th:text="${assignment.event.name}">
+</td>
+<td th:text="${assignment.role}">
+</td>
+<td th:text="${assignment.hoursWorked}">
+</td>
+</tr>
+<tr th:if="${#lists.isEmpty(assignments)}">
+<td colspan="4" class="empty">Assign a volunteer to an event to get started.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+  </section>
+
+  <section th:if="${section == 'beneficiaries'}">
+    <div class="resource-grid">
+<article class="panel stock-card" th:each="resource : ${resources}">
+<span class="badge" th:text="${resource.category.name}">
+</span>
+<h2 th:text="${resource.name}">
+</h2>
+<strong th:text="${resource.stockQuantity}">
+</strong>
+<small th:text="${resource.unit + '(s) available'}">
+</small>
+</article>
+</div>
+    <div class="columns">
+<section class="panel">
+<h2>Record a distribution</h2>
+<p>Stock is reduced automatically when support is recorded.</p>
+<form method="post" th:action="@{/actions/distribution}">
+<input th:replace="~{fragments :: csrf}">
+<label>Beneficiary<select th:replace="~{fragments :: beneficiarySelect}">
+</select>
+</label>
+<label>Resource<select th:replace="~{fragments :: resourceSelect}">
+</select>
+</label>
+<label>Quantity<input name="quantity" type="number" min="1" required>
+</label>
+<button class="button">Record distribution <span>↗</span>
+</button>
+</form>
+<hr>
+<h2>Replenish resources</h2>
+<form method="post" th:action="@{/actions/restock}">
+<input th:replace="~{fragments :: csrf}">
+<label>Resource<select th:replace="~{fragments :: resourceSelect}">
+</select>
+</label>
+<label>Quantity to add<input name="quantity" type="number" min="1" required>
+</label>
+<button class="button secondary">Add stock</button>
+</form>
+</section>
+<div>
+<section class="panel">
+<h2>Add a household need</h2>
+<form method="post" th:action="@{/actions/need}">
+<input th:replace="~{fragments :: csrf}">
+<label>Beneficiary<select th:replace="~{fragments :: beneficiarySelect}">
+</select>
+</label>
+<label>Program<select th:replace="~{fragments :: categorySelect}">
+</select>
+</label>
+<label>Description<textarea name="description" rows="2" required>
+</textarea>
+</label>
+<label>Priority<select name="priority">
+<option value="1">1 — Most urgent</option>
+<option value="2">2 — High</option>
+<option value="3">3 — Medium</option>
+<option value="4">4 — Low</option>
+<option value="5">5 — Least urgent</option>
+</select>
+</label>
+<button class="button secondary">Add need</button>
+</form>
+</section>
+<section class="panel">
+<h2>Measure the difference</h2>
+<form method="post" th:action="@{/actions/impact}">
+<input th:replace="~{fragments :: csrf}">
+<label>Program<select th:replace="~{fragments :: categorySelect}">
+</select>
+</label>
+<label>Evaluation strategy<select name="strategy">
+<option value="food">Food aid</option>
+<option value="education">Education</option>
+</select>
+</label>
+<button class="button secondary">Evaluate impact</button>
+</form>
+</section>
+</div>
+</div>
+    <section class="panel">
+<h2>Families & needs</h2>
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+<th>Beneficiary</th>
+<th>Household</th>
+<th>Needs</th>
+</tr>
+</thead>
+<tbody>
+<tr th:each="beneficiary : ${beneficiaries}">
+<td>
+<strong th:text="${beneficiary.name}">
+</strong>
+<small th:text="${beneficiary.address}">
+</small>
+</td>
+<td th:text="${beneficiary.familySize + ' people'}">
+</td>
+<td>
+<p class="need" th:each="need : ${beneficiary.needs}">
+<span class="tag" th:text="${'P' + need.priority}">
+</span> <span th:text="${need.category.name + ' — ' + need.description}">
+</span>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+    <section class="panel">
+<h2>Distribution history</h2>
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+<th>Date</th>
+<th>Beneficiary</th>
+<th>Resource</th>
+<th>Quantity</th>
+</tr>
+</thead>
+<tbody>
+<tr th:each="distribution : ${distributions}">
+<td th:text="${distribution.date}">
+</td>
+<td th:text="${distribution.beneficiary.name}">
+</td>
+<td th:text="${distribution.resource.name}">
+</td>
+<td th:text="${distribution.quantity}">
+</td>
+</tr>
+<tr th:if="${#lists.isEmpty(distributions)}">
+<td colspan="4" class="empty">Distributions will appear here as support reaches your community.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+  </section>
+
+  <section th:if="${section == 'lookups'}">
+<section class="panel" th:each="group : ${lookupGroups}">
+<div class="panel-heading">
+<h2 th:text="${group.title}">
+</h2>
+<span class="badge" th:text="${#lists.size(group.items) + ' records'}">
+</span>
+</div>
+<div class="lookup-list">
+<div class="lookup-row" th:each="item : ${group.items}">
+<form method="post" th:action="@{/actions/lookup-update}" class="lookup-edit">
+<input th:replace="~{fragments :: csrf}">
+<input type="hidden" name="type" th:value="${group.type}">
+<input type="hidden" name="id" th:value="${item.id}">
+<label>Name<input name="name" th:value="${item.name}" required>
+</label>
+<label>Description<input name="description" th:value="${item.description}">
+</label>
+<button class="button secondary">Save</button>
+</form>
+<form method="post" th:action="@{/actions/lookup-delete}" data-confirm="Delete this lookup? Referenced lookups are protected.">
+<input th:replace="~{fragments :: csrf}">
+<input type="hidden" name="type" th:value="${group.type}">
+<input type="hidden" name="id" th:value="${item.id}">
+<button class="button danger">Delete</button>
+</form>
+</div>
+</div>
+<details>
+<summary>Add a record</summary>
+<form method="post" th:action="@{/actions/lookup-create}">
+<input th:replace="~{fragments :: csrf}">
+<input type="hidden" name="type" th:value="${group.type}">
+<div class="form-grid">
+<label>Name<input name="name" required>
+</label>
+<label>Description<input name="description">
+</label>
+</div>
+<div class="checks">
+<label>
+<input type="checkbox" name="flag">
+<span th:text="${group.flag}">
+</span>
+</label>
+</div>
+<button class="button">Add record</button>
+</form>
+</details>
+</section>
+</section>
+
+  <section th:if="${section == 'activity'}">
+<div class="columns">
+<section class="panel">
+<h2>Activity feed</h2>
+<p>Updates from donations, event changes, and distributions.</p>
+<p class="empty" th:if="${#lists.isEmpty(activity)}">No activity yet. Start with a donation, event update, or distribution.</p>
+<p class="activity-line" th:each="entry : ${activity}" th:text="${entry}">
+</p>
+</section>
+<section class="panel">
+<h2>Community inbox</h2>
+<form method="get" th:action="@{/activity}">
+<label>Person<select th:replace="~{fragments :: personSelect}">
+</select>
+</label>
+<button class="button secondary">Open inbox</button>
+</form>
+<div th:if="${selectedPerson != null}">
+<h3 th:text="${selectedPerson.name + '’s notifications'}">
+</h3>
+<p class="empty" th:if="${#lists.isEmpty(selectedPerson.notifications)}">No notifications yet.</p>
+<article class="notification" th:each="notification : ${selectedPerson.notifications}">
+<div class="spread">
+<span class="tag" th:text="${notification.channel}">
+</span>
+<span class="badge" th:text="${notification.read ? 'Read' : 'New'}">
+</span>
+</div>
+<h3 th:text="${notification.subject}">
+</h3>
+<p th:text="${notification.body}">
+</p>
+<small th:text="${#temporals.format(notification.receivedAt, 'dd MMM yyyy, HH:mm')}">
+</small>
+</article>
+<form method="post" th:action="@{/actions/read-inbox}" th:if="${!#lists.isEmpty(selectedPerson.notifications)}">
+<input th:replace="~{fragments :: csrf}">
+<input type="hidden" name="personId" th:value="${selectedPerson.id}">
+<button class="button secondary">Mark all as read</button>
+</form>
+</div>
+</section>
+</div>
+</section>
+  <footer>Made for a community that cares.<span>Hope Bridge · Local demonstration · Data resets on restart</span>
+</footer>
+</main>
+</div>
+</body>
+</html>
