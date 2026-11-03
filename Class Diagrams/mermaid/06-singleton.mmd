@@ -1,0 +1,82 @@
+---
+title: Singleton Pattern - One Shared Data Store
+---
+classDiagram
+  direction TB
+  class Identifiable {
+    <<interface>>
+    +getId() int
+  }
+  class GenericDAO~T~ {
+    -tableName: String
+    -items: List~T~
+    +insert(item: T) int
+    +findById(id: int) T
+    +findAll() List~T~
+    +update(item: T) boolean
+    +delete(id: int) boolean
+  }
+  class DatabaseManager {
+    <<Singleton>>
+    -instance: DatabaseManager$
+    -organizationName: String
+    -taxRegistrationNo: String
+    -lastId: int
+    -donors, volunteers, beneficiaries: GenericDAO
+    -campaigns, donations, events, assignments: GenericDAO
+    -resources, distributions: GenericDAO
+    -skills, itemCategories, resourceCategories: GenericDAO
+    -activityLog: ActivityLog
+    -DatabaseManager()
+    +getInstance() DatabaseManager$
+    +nextId() int
+    +getAllPeople() List~Person~
+    -loadSampleData() void
+    +getDonors() / getEvents() / getSkills() ...: GenericDAO
+  }
+  class PersonService {
+    +register(type, name, email, phone, password: String) Person
+    +authenticate(email: String, password: String) Person
+    +findById(id: int) Person
+    +searchByName(text: String) List~Person~
+    +isEmailAvailable(email: String, except: Person) boolean
+    +update(p: Person) boolean
+    +delete(id: int) boolean
+    +isInUse(p: Person) boolean
+    +hashPassword(password: String) String$
+  }
+  class ActivityLog {
+    -entries: List~String~
+    +watch(subject: Subject) void
+    +update(source: Subject, change: ChangeEvent) void
+    +getEntries() List~String~
+  }
+  class MainController {
+    -view: MainView
+    -db: DatabaseManager
+    -personController ... lookupController
+    +MainController(view: MainView)
+    +run() void
+    -showNotifications() void
+  }
+  class LookupController {
+    -view: LookupView
+    -db: DatabaseManager
+    +run() void
+    -create(table: int) void
+    -update(table: GenericDAO) void
+    -delete(table: GenericDAO) void
+    -isInUse(item: LookupItem) boolean
+  }
+
+  DatabaseManager --> "0..1" DatabaseManager : instance
+  DatabaseManager "1" *-- "12" GenericDAO : tables
+  DatabaseManager "1" *-- "1" ActivityLog : activityLog
+  GenericDAO "1" o-- "0..*" Identifiable : items
+  PersonService ..> DatabaseManager : getInstance()
+  MainController "1" *-- "1" LookupController
+  MainController --> "1" DatabaseManager : db
+  LookupController --> "1" DatabaseManager : db
+  LookupController ..> GenericDAO : CRUD
+
+  note for DatabaseManager "Singleton\nprivate constructor: no 'new DatabaseManager()' outside\nstatic instance holds the only object\nsynchronized getInstance(): creates it once (lazy)\nand returns the same instance afterwards"

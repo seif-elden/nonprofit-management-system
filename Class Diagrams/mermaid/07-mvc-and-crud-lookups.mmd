@@ -1,0 +1,217 @@
+---
+title: MVC Architecture and CRUD Lookup Tables
+---
+classDiagram
+  direction TB
+  class GenericDAO~T~ {
+    -tableName: String
+    -items: List~T~
+    +insert(item: T) int
+    +findById(id: int) T
+    +findAll() List~T~
+    +update(item: T) boolean
+    +delete(id: int) boolean
+  }
+  class DatabaseManager {
+    <<Singleton>>
+    -instance: DatabaseManager$
+    -organizationName: String
+    -taxRegistrationNo: String
+    -lastId: int
+    -donors, volunteers, beneficiaries: GenericDAO
+    -campaigns, donations, events, assignments: GenericDAO
+    -resources, distributions: GenericDAO
+    -skills, itemCategories, resourceCategories: GenericDAO
+    -activityLog: ActivityLog
+    -DatabaseManager()
+    +getInstance() DatabaseManager$
+    +nextId() int
+    +getAllPeople() List~Person~
+    -loadSampleData() void
+    +getDonors() / getEvents() / getSkills() ...: GenericDAO
+  }
+  class LookupItem {
+    <<abstract>>
+    -id: int
+    -name: String
+    -description: String
+    +getTableName() String*
+    +getId() int
+    +getName() / getDescription() String
+    +setName(name: String) void
+    +setDescription(d: String) void
+  }
+  class Skill {
+    -requiresTraining: boolean
+    +getTableName() String
+  }
+  class ItemCategory {
+    -perishable: boolean
+    +isPerishable() boolean
+    +getTableName() String
+  }
+  class ResourceCategory {
+    -essential: boolean
+    +getTableName() String
+  }
+  class View {
+    <<abstract>>
+    #SCANNER: Scanner$
+    +show() int*
+    +showTitle(title: String) void
+    +showMessage(msg: String) void
+    +showError(msg: String) void
+    +readText / readInt / readDouble / readYesNo / readDate(prompt: String)
+    +showLookupItems(items: List~LookupItem~) void
+    +showPeople(people: List~Person~) void
+    +showDocument(d: Document) void
+  }
+  class MainView {
+    +show() int
+    +showNotifications(p: Person) void
+    +showActivityLog(entries: List~String~) void
+  }
+  class PersonView {
+    +show() int
+    +showSignupForm() void
+    +showLoginForm() void
+    +askRole() int
+    +askChannel() Channel
+    +showProfile(p: Person) void
+  }
+  class DonationView {
+    +show() int
+    +askDonationType() int
+    +askPaymentMethod() int
+    +showDonationList(list: List~Donation~) void
+    +showReceipt(receipt: Document) void
+    +showCampaigns(list: List~Campaign~) void
+    +showStats(total: double, count: int) void
+  }
+  class EventView {
+    +show() int
+    +askEventType() int
+    +showEventList(list: List~Event~) void
+    +showTicket(t: Ticket) void
+  }
+  class VolunteerView {
+    +show() int
+    +showVolunteers(list: List~Volunteer~) void
+    +showAssignments(list: List~Assignment~) void
+    +showCertificate(c: Document) void
+  }
+  class BeneficiaryView {
+    +show() int
+    +askProgram() int
+    +showBeneficiaries(list: List~Beneficiary~) void
+    +showResources(list: List~Resource~) void
+    +showDistributions(list: List~Distribution~) void
+    +showImpact(r: ImpactReport) void
+  }
+  class LookupView {
+    +show() int
+    +showTableMenu(tableName: String) int
+  }
+  class MainController {
+    -view: MainView
+    -db: DatabaseManager
+    -personController ... lookupController
+    +MainController(view: MainView)
+    +run() void
+    -showNotifications() void
+  }
+  class PersonController {
+    -view: PersonView
+    -personService: PersonService
+    +run() void
+    -signup() / login() / search() void
+    -updateContact() / deletePerson() void
+  }
+  class DonationController {
+    -view: DonationView
+    -donationService: DonationService
+    -statsObserver: StatsObserver
+    -db: DatabaseManager
+    +run() void
+    -loadDonations() / submitDonation() void
+    -choosePaymentStrategy(d: Donor) PaymentStrategy
+    -taxStatement() / generateReceipt() void
+  }
+  class EventController {
+    -view: EventView
+    -eventService: EventService
+    -personService: PersonService
+    -attendeeObserver: AttendeeNotificationObserver
+    -db: DatabaseManager
+    +run() void
+    -loadEvents() / createEvent() / registerAttendee() void
+    -sellTicket() / markAttendance() / changeDate() void
+    -changeVenue() / cancelEvent() / sendReminders() void
+    -completeEvent() void
+  }
+  class VolunteerController {
+    -view: VolunteerView
+    -volunteerService: VolunteerService
+    -db: DatabaseManager
+    +run() void
+    -loadVolunteers() / suggest() / assign() void
+    -logHours() / showAssignments() / issueCertificate() void
+  }
+  class BeneficiaryController {
+    -view: BeneficiaryView
+    -distributionService: DistributionService
+    -db: DatabaseManager
+    +run() void
+    -loadBeneficiaries() / addNeed() / recordDistribution() void
+    -showDistributions() / restock() / showImpact() void
+  }
+  class LookupController {
+    -view: LookupView
+    -db: DatabaseManager
+    +run() void
+    -create(table: int) void
+    -update(table: GenericDAO) void
+    -delete(table: GenericDAO) void
+    -isInUse(item: LookupItem) boolean
+  }
+  class Main {
+    +main(args: String[]) void$
+  }
+
+  DatabaseManager --> "0..1" DatabaseManager : instance
+  DatabaseManager "1" *-- "12" GenericDAO : tables
+  Skill --|> LookupItem
+  ItemCategory --|> LookupItem
+  ResourceCategory --|> LookupItem
+  MainView --|> View
+  PersonView --|> View
+  DonationView --|> View
+  EventView --|> View
+  VolunteerView --|> View
+  BeneficiaryView --|> View
+  LookupView --|> View
+  Main ..> MainController : «create»
+  MainController "1" --> "1" MainView : view
+  MainController "1" *-- "1" PersonController
+  MainController "1" *-- "1" DonationController
+  MainController "1" *-- "1" EventController
+  MainController "1" *-- "1" VolunteerController
+  MainController "1" *-- "1" BeneficiaryController
+  MainController "1" *-- "1" LookupController
+  PersonController "1" --> "1" PersonView : view
+  DonationController "1" --> "1" DonationView : view
+  EventController "1" --> "1" EventView : view
+  VolunteerController "1" --> "1" VolunteerView : view
+  BeneficiaryController "1" --> "1" BeneficiaryView : view
+  LookupController "1" --> "1" LookupView : view
+  MainController --> "1" DatabaseManager : db
+  LookupController --> "1" DatabaseManager : db
+  DonationController --> "1" DatabaseManager : db
+  EventController --> "1" DatabaseManager : db
+  VolunteerController --> "1" DatabaseManager : db
+  BeneficiaryController --> "1" DatabaseManager : db
+  LookupController ..> GenericDAO : CRUD
+  LookupController ..> LookupItem : edits rows
+
+  note for View "View: the only layer that reads input and prints output"
+  note for LookupItem "CRUD lookup tables: GenericDAO insert / findAll / findById / update / delete\nrows still in use cannot be deleted (LookupController.isInUse)"

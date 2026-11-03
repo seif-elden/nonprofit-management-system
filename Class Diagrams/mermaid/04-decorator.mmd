@@ -1,0 +1,86 @@
+---
+title: Decorator Pattern - Documents and Tickets
+---
+classDiagram
+  direction TB
+  class Document {
+    <<abstract>>
+    #title: String
+    +getTitle() String
+    +render() String*
+  }
+  class BasicReceipt {
+    -donation: Donation
+    +render() String
+  }
+  class VolunteerCertificate {
+    -volunteer: Volunteer
+    -totalHours: double
+    -issuedDate: LocalDate
+    +render() String
+  }
+  class DocumentDecorator {
+    <<abstract>>
+    #wrapped: Document
+    +DocumentDecorator(wrapped: Document)
+    +render() String*
+  }
+  class TaxInfoDecorator {
+    -taxRegistrationNo: String
+    +render() String
+  }
+  class ThankYouNoteDecorator {
+    -message: String
+    +render() String
+  }
+  class SignatureDecorator {
+    -signedBy: String
+    -organizationName: String
+    +render() String
+  }
+  class Ticket {
+    <<interface>>
+    +getPrice() double
+    +getDescription() String
+  }
+  class BasicTicket {
+    -basePrice: double
+    -event: Event
+    -holder: Person
+    +getPrice() double
+    +getDescription() String
+  }
+  class TicketDecorator {
+    <<abstract>>
+    #wrapped: Ticket
+    +getPrice() double*
+    +getDescription() String*
+  }
+  class VipDecorator {
+    -VIP_PRICE: double$
+    +getPrice() double
+    +getDescription() String
+  }
+  class MealDecorator {
+    -MEAL_PRICE: double$
+    +getPrice() double
+    +getDescription() String
+  }
+
+  BasicReceipt --|> Document
+  VolunteerCertificate --|> Document
+  DocumentDecorator --|> Document
+  DocumentDecorator "0..*" o-- "1" Document : wrapped
+  TaxInfoDecorator --|> DocumentDecorator
+  ThankYouNoteDecorator --|> DocumentDecorator
+  SignatureDecorator --|> DocumentDecorator
+  BasicTicket ..|> Ticket
+  TicketDecorator ..|> Ticket
+  TicketDecorator "0..*" o-- "1" Ticket : wrapped
+  VipDecorator --|> TicketDecorator
+  MealDecorator --|> TicketDecorator
+
+  note for Document "Component 1: receipts and certificates"
+  note for Ticket "Component 2: event tickets"
+  note for TaxInfoDecorator "Concrete Decorators: render() = wrapped.render() + extra text"
+  note for VipDecorator "Concrete Decorators: getPrice() = wrapped.getPrice() + extra"

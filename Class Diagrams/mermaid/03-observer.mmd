@@ -1,0 +1,128 @@
+---
+title: Observer Pattern - Donations, Events and Distributions
+---
+classDiagram
+  direction TB
+  class NotificationService {
+    -strategies: Map~Channel, NotificationStrategy~
+    -strategy: NotificationStrategy
+    +registerStrategy(c: Channel, s: NotificationStrategy) void
+    +setStrategy(s: NotificationStrategy) void
+    +sendNotification(to: Person, msg: Message) boolean
+    +broadcast(to: List~Person~, msg: Message) int
+  }
+  class Subject {
+    <<interface>>
+    +addObserver(o: Observer) void
+    +removeObserver(o: Observer) void
+    +notifyObservers(change: ChangeEvent) void
+  }
+  class Observer {
+    <<interface>>
+    +update(source: Subject, change: ChangeEvent) void
+  }
+  class ChangeEvent {
+    -type: ChangeType
+    -payload: Object
+    -description: String
+    -timestamp: LocalDateTime
+    +getType() ChangeType
+    +getPayload() Object
+    +getTimestamp() LocalDateTime
+  }
+  class ChangeType {
+    <<enumeration>>
+    DONATION_RECORDED
+    EVENT_RESCHEDULED
+    EVENT_VENUE_CHANGED
+    EVENT_CANCELLED
+    EVENT_REMINDER
+    EVENT_COMPLETED
+    DISTRIBUTION_RECORDED
+  }
+  class ReceiptObserver {
+    -donationService: DonationService
+    +update(source: Subject, change: ChangeEvent) void
+  }
+  class ThankYouObserver {
+    -notificationService: NotificationService
+    +update(source: Subject, change: ChangeEvent) void
+  }
+  class StatsObserver {
+    -totalRaised: double
+    -donationCount: int
+    +update(source: Subject, change: ChangeEvent) void
+    +getTotalRaised() double
+  }
+  class AttendeeNotificationObserver {
+    -notificationService: NotificationService
+    -lastReached: int
+    +update(source: Subject, change: ChangeEvent) void
+    +getLastReached() int
+  }
+  class StockObserver {
+    +update(source: Subject, change: ChangeEvent) void
+  }
+  class ActivityLog {
+    -entries: List~String~
+    +watch(subject: Subject) void
+    +update(source: Subject, change: ChangeEvent) void
+    +getEntries() List~String~
+  }
+  class DonationService {
+    -observers: List~Observer~
+    +addObserver(o: Observer) void
+    +removeObserver(o: Observer) void
+    +notifyObservers(change: ChangeEvent) void
+    +recordDonation(h: DonationHandler, d: Donor, f: DonationForm) Donation
+    +buildReceipt(d: Donation, options: List~String~) Document
+    +getDonationsByDonor(donor: Donor) List~Donation~
+    +generateTaxStatement(donor: Donor, year: int) String
+  }
+  class EventService {
+    -observers: List~Observer~
+    +addObserver(o: Observer) void
+    +removeObserver(o: Observer) void
+    +notifyObservers(change: ChangeEvent) void
+    +createEvent(c: EventCreator, f: EventForm) Event
+    +registerAttendee(e: Event, p: Person) boolean
+    +markAttendance(e: Event, p: Person) boolean
+    +sellTicket(e: Event, p: Person, extras: List~String~) Ticket
+    +changeDate(e: Event, newDate: LocalDate) boolean
+    +changeVenue(e: Event, newVenue: String) void
+    +cancelEvent(e: Event) void
+    +sendReminders(e: Event) void
+    +completeEvent(e: Event, hours: double) void
+  }
+  class DistributionService {
+    -observers: List~Observer~
+    -evaluator: ImpactEvaluator
+    +addObserver(o: Observer) void
+    +removeObserver(o: Observer) void
+    +notifyObservers(change: ChangeEvent) void
+    +recordDistribution(b: Beneficiary, r: Resource, qty: int) Distribution
+    +getDistributionsByBeneficiary(b: Beneficiary) List~Distribution~
+    +evaluateImpact(programType: ResourceCategory, s: ImpactEvaluationStrategy) ImpactReport
+  }
+
+  Subject "1" --> "0..*" Observer : observers
+  DonationService ..|> Subject
+  EventService ..|> Subject
+  DistributionService ..|> Subject
+  ReceiptObserver ..|> Observer
+  ThankYouObserver ..|> Observer
+  StatsObserver ..|> Observer
+  AttendeeNotificationObserver ..|> Observer
+  StockObserver ..|> Observer
+  ActivityLog ..|> Observer
+  Observer ..> ChangeEvent
+  ChangeEvent "0..*" --> "1" ChangeType : type
+  ReceiptObserver "0..*" --> "1" DonationService : donationService
+  ThankYouObserver "0..*" --> "1" NotificationService : notificationService
+  AttendeeNotificationObserver "0..*" --> "1" NotificationService : notificationService
+  ActivityLog ..> Subject : watch()
+
+  note for Subject "Subject (publisher)"
+  note for Observer "Observer (subscriber)\nupdate(source, change)"
+  note for DonationService "Concrete Subjects\nevery change -> notifyObservers(new ChangeEvent(...))"
+  note for ActivityLog "Concrete Observers subscribe themselves\n(constructor or watch() calls subject.addObserver(this))"

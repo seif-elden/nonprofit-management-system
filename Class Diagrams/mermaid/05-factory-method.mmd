@@ -1,0 +1,162 @@
+---
+title: Factory Method Pattern - Creating Donations and Events
+---
+classDiagram
+  direction TB
+  class Donation {
+    <<abstract>>
+    -id: int
+    -donor: Donor
+    -campaign: Campaign
+    -date: LocalDate
+    -status: DonationStatus
+    -confirmation: String
+    -receiptOptions: List~String~
+    -receipt: Document
+    +getType() String*
+    +validate() boolean*
+    +process() String*
+    +getValue() double*
+    +getSummary() String*
+    +setStatus(s: DonationStatus) void
+    +setReceipt(r: Document) void
+  }
+  class MonetaryDonation {
+    -amount: double
+    -paymentStrategy: PaymentStrategy
+    +setPaymentStrategy(p: PaymentStrategy) void
+    +getType() String
+    +validate() boolean
+    +process() String
+    +getValue() double
+    +getSummary() String
+  }
+  class InKindDonation {
+    -itemDescription: String
+    -quantity: int
+    -estimatedValue: double
+    -category: ItemCategory
+    +getType() String
+    +validate() boolean
+    +process() String
+    +getValue() double
+    +getSummary() String
+  }
+  class DonationForm {
+    -campaign: Campaign
+    -amount: double
+    -paymentStrategy: PaymentStrategy
+    -itemDescription: String
+    -quantity: int
+    -estimatedValue: double
+    -itemCategory: ItemCategory
+    -receiptOptions: List~String~
+    +monetary(c: Campaign, amount: double, p: PaymentStrategy) DonationForm$
+    +inKind(c: Campaign, item: String, qty: int, value: double, cat: ItemCategory) DonationForm$
+    +withReceiptOptions(options: List~String~) DonationForm
+  }
+  class DonationHandler {
+    <<abstract>>
+    +receiveDonation(donor: Donor, form: DonationForm) Donation
+    #createDonation(donor: Donor, form: DonationForm) Donation*
+  }
+  class MonetaryDonationHandler {
+    #createDonation(donor: Donor, form: DonationForm) Donation
+  }
+  class InKindDonationHandler {
+    #createDonation(donor: Donor, form: DonationForm) Donation
+  }
+  class Event {
+    <<abstract>>
+    -id: int
+    -name: String
+    -date: LocalDate
+    -venue: String
+    -capacity: int
+    -ticketPrice: double
+    -requiredSkill: Skill
+    -status: EventStatus
+    -attendees: List~Person~
+    -attended: List~Person~
+    -assignments: List~Assignment~
+    -tickets: List~Ticket~
+    +getType() String*
+    +getDetails() String*
+    +isOpen() boolean
+    +register(p: Person) boolean
+    +markAttendance(p: Person) boolean
+    +updateDate(d: LocalDate) void
+    +updateVenue(v: String) void
+    +setStatus(s: EventStatus) void
+    +getVolunteers() List~Volunteer~
+  }
+  class Fundraiser {
+    -targetAmount: double
+    +getType() String
+    +getDetails() String
+  }
+  class Workshop {
+    -trainer: String
+    -topic: String
+    +getType() String
+    +getDetails() String
+  }
+  class Outreach {
+    -location: String
+    -teamSize: int
+    +getType() String
+    +getDetails() String
+  }
+  class EventForm {
+    -name: String
+    -date: LocalDate
+    -venue: String
+    -capacity: int
+    -ticketPrice: double
+    -requiredSkill: Skill
+    -targetAmount: double
+    -trainer, topic, location: String
+    -teamSize: int
+    +setFundraiserDetails(target: double) void
+    +setWorkshopDetails(trainer: String, topic: String) void
+    +setOutreachDetails(location: String, teamSize: int) void
+  }
+  class EventCreator {
+    <<abstract>>
+    +openEvent(form: EventForm) Event
+    #createEvent(id: int, form: EventForm) Event*
+  }
+  class FundraiserCreator {
+    #createEvent(id: int, form: EventForm) Event
+  }
+  class WorkshopCreator {
+    #createEvent(id: int, form: EventForm) Event
+  }
+  class OutreachCreator {
+    #createEvent(id: int, form: EventForm) Event
+  }
+
+  MonetaryDonation --|> Donation
+  InKindDonation --|> Donation
+  MonetaryDonationHandler --|> DonationHandler
+  InKindDonationHandler --|> DonationHandler
+  DonationHandler ..> Donation : uses product
+  DonationHandler ..> DonationForm
+  MonetaryDonationHandler ..> MonetaryDonation : «create»
+  InKindDonationHandler ..> InKindDonation : «create»
+  Fundraiser --|> Event
+  Workshop --|> Event
+  Outreach --|> Event
+  FundraiserCreator --|> EventCreator
+  WorkshopCreator --|> EventCreator
+  OutreachCreator --|> EventCreator
+  EventCreator ..> Event : uses product
+  EventCreator ..> EventForm
+  FundraiserCreator ..> Fundraiser : «create»
+  WorkshopCreator ..> Workshop : «create»
+  OutreachCreator ..> Outreach : «create»
+
+  note for DonationHandler "Creator: receiveDonation() = common workflow\ncreateDonation() = factory method"
+  note for EventCreator "Creator: openEvent() = common workflow\ncreateEvent() = factory method"
+  note for Donation "Product"
+  note for Event "Product"
