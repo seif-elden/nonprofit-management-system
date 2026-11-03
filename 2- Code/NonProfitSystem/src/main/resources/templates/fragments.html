@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+<th:block th:fragment="csrf">
+<input type="hidden" name="_csrf" th:value="${csrf}">
+</th:block>
+<th:block th:fragment="receiptOptions">
+<div class="checks">
+<label>
+<input type="checkbox" name="tax" checked> Include tax information</label>
+<label>
+<input type="checkbox" name="thanks" checked> Add a thank-you note</label>
+</div>
+</th:block>
+<select th:fragment="personSelect" name="personId" required>
+<option th:each="person : ${allPeople}" th:value="${person.id}" th:text="${person.name + ' · ' + person.role}">
+</option>
+</select>
+<select th:fragment="eventSelect" name="eventId" required>
+<option th:each="event : ${events}" th:value="${event.id}" th:text="${event.name + ' · ' + event.status}">
+</option>
+</select>
+<select th:fragment="volunteerSelect" name="volunteerId" required>
+<option th:each="volunteer : ${volunteers}" th:value="${volunteer.id}" th:text="${volunteer.name}">
+</option>
+</select>
+<select th:fragment="beneficiarySelect" name="beneficiaryId" required>
+<option th:each="beneficiary : ${beneficiaries}" th:value="${beneficiary.id}" th:text="${beneficiary.name}">
+</option>
+</select>
+<select th:fragment="resourceSelect" name="resourceId" required>
+<option th:each="resource : ${resources}" th:value="${resource.id}" th:text="${resource.name + ' · ' + resource.stockQuantity + ' available'}">
+</option>
+</select>
+<select th:fragment="categorySelect" name="categoryId" required>
+<option th:each="category : ${resourceCategories}" th:value="${category.id}" th:text="${category.name}">
+</option>
+</select>
+</body>
+</html>
