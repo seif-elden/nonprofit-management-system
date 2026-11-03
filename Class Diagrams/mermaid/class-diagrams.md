@@ -1,15 +1,20 @@
 # Hope Bridge - Class Diagrams (Mermaid)
 
-Generated from `Class Diagrams/source/*.puml` (same model as the PNG/SVG diagrams).
+Generated from `Class Diagrams/source/*.puml` (same model as the PlantUML PNG/SVG diagrams).
+Rendered images: the `.svg` / `.png` files next to each `.mmd`.
 
 ## Hope Bridge Non-Profit Management System - Full Class Diagram (Phase 1)
+
+![Hope Bridge Non-Profit Management System - Full Class Diagram (Phase 1)](01-full-class-diagram.png)
+
+<details><summary>Mermaid source</summary>
 
 ```mermaid
 ---
 title: Hope Bridge Non-Profit Management System - Full Class Diagram (Phase 1)
 ---
 classDiagram
-  direction TB
+  direction LR
   class Identifiable {
     <<interface>>
     +getId() int
@@ -852,14 +857,20 @@ classDiagram
   LookupController ..> LookupItem : edits rows
 ```
 
+</details>
+
 ## Strategy Pattern - Payment, Notification Channel and Impact Evaluation
+
+![Strategy Pattern - Payment, Notification Channel and Impact Evaluation](02-strategy.png)
+
+<details><summary>Mermaid source</summary>
 
 ```mermaid
 ---
 title: Strategy Pattern - Payment, Notification Channel and Impact Evaluation
 ---
 classDiagram
-  direction TB
+  direction LR
   class Channel {
     <<enumeration>>
     EMAIL
@@ -985,19 +996,25 @@ classDiagram
   DonationController ..> PaymentStrategy : chooses strategy
   BeneficiaryController ..> ImpactEvaluationStrategy : chooses strategy
 
-  note for PaymentStrategy "Strategy 1 - payment\nContext: MonetaryDonation\n(setPaymentStrategy at runtime)"
-  note for NotificationStrategy "Strategy 2 - communication channel\nContext: NotificationService picks the\nstrategy from each recipient's preferred channel"
-  note for ImpactEvaluationStrategy "Strategy 3 - impact evaluation\nContext: ImpactEvaluator (setStrategy)"
+  note for PaymentStrategy "Strategy 1 - payment<br>Context: MonetaryDonation<br>(setPaymentStrategy at runtime)"
+  note for NotificationStrategy "Strategy 2 - communication channel<br>Context: NotificationService picks the<br>strategy from each recipient's preferred channel"
+  note for ImpactEvaluationStrategy "Strategy 3 - impact evaluation<br>Context: ImpactEvaluator (setStrategy)"
 ```
 
+</details>
+
 ## Observer Pattern - Donations, Events and Distributions
+
+![Observer Pattern - Donations, Events and Distributions](03-observer.png)
+
+<details><summary>Mermaid source</summary>
 
 ```mermaid
 ---
 title: Observer Pattern - Donations, Events and Distributions
 ---
 classDiagram
-  direction TB
+  direction LR
   class NotificationService {
     -strategies: Map~Channel, NotificationStrategy~
     -strategy: NotificationStrategy
@@ -1118,19 +1135,25 @@ classDiagram
   ActivityLog ..> Subject : watch()
 
   note for Subject "Subject (publisher)"
-  note for Observer "Observer (subscriber)\nupdate(source, change)"
-  note for DonationService "Concrete Subjects\nevery change -> notifyObservers(new ChangeEvent(...))"
-  note for ActivityLog "Concrete Observers subscribe themselves\n(constructor or watch() calls subject.addObserver(this))"
+  note for Observer "Observer (subscriber)<br>update(source, change)"
+  note for DonationService "Concrete Subjects<br>every change -> notifyObservers(new ChangeEvent(...))"
+  note for ActivityLog "Concrete Observers subscribe themselves<br>(constructor or watch() calls subject.addObserver(this))"
 ```
 
+</details>
+
 ## Decorator Pattern - Documents and Tickets
+
+![Decorator Pattern - Documents and Tickets](04-decorator.png)
+
+<details><summary>Mermaid source</summary>
 
 ```mermaid
 ---
 title: Decorator Pattern - Documents and Tickets
 ---
 classDiagram
-  direction TB
+  direction LR
   class Document {
     <<abstract>>
     #title: String
@@ -1214,14 +1237,20 @@ classDiagram
   note for VipDecorator "Concrete Decorators: getPrice() = wrapped.getPrice() + extra"
 ```
 
+</details>
+
 ## Factory Method Pattern - Creating Donations and Events
+
+![Factory Method Pattern - Creating Donations and Events](05-factory-method.png)
+
+<details><summary>Mermaid source</summary>
 
 ```mermaid
 ---
 title: Factory Method Pattern - Creating Donations and Events
 ---
 classDiagram
-  direction TB
+  direction LR
   class Donation {
     <<abstract>>
     -id: int
@@ -1375,13 +1404,19 @@ classDiagram
   WorkshopCreator ..> Workshop : «create»
   OutreachCreator ..> Outreach : «create»
 
-  note for DonationHandler "Creator: receiveDonation() = common workflow\ncreateDonation() = factory method"
-  note for EventCreator "Creator: openEvent() = common workflow\ncreateEvent() = factory method"
+  note for DonationHandler "Creator: receiveDonation() = common workflow<br>createDonation() = factory method"
+  note for EventCreator "Creator: openEvent() = common workflow<br>createEvent() = factory method"
   note for Donation "Product"
   note for Event "Product"
 ```
 
+</details>
+
 ## Singleton Pattern - One Shared Data Store
+
+![Singleton Pattern - One Shared Data Store](06-singleton.png)
+
+<details><summary>Mermaid source</summary>
 
 ```mermaid
 ---
@@ -1465,17 +1500,23 @@ classDiagram
   LookupController --> "1" DatabaseManager : db
   LookupController ..> GenericDAO : CRUD
 
-  note for DatabaseManager "Singleton\nprivate constructor: no 'new DatabaseManager()' outside\nstatic instance holds the only object\nsynchronized getInstance(): creates it once (lazy)\nand returns the same instance afterwards"
+  note for DatabaseManager "Singleton<br>private constructor: no 'new DatabaseManager()' outside<br>static instance holds the only object<br>synchronized getInstance(): creates it once (lazy)<br>and returns the same instance afterwards"
 ```
 
+</details>
+
 ## MVC Architecture and CRUD Lookup Tables
+
+![MVC Architecture and CRUD Lookup Tables](07-mvc-and-crud-lookups.png)
+
+<details><summary>Mermaid source</summary>
 
 ```mermaid
 ---
 title: MVC Architecture and CRUD Lookup Tables
 ---
 classDiagram
-  direction TB
+  direction LR
   class GenericDAO~T~ {
     -tableName: String
     -items: List~T~
@@ -1687,5 +1728,7 @@ classDiagram
   LookupController ..> LookupItem : edits rows
 
   note for View "View: the only layer that reads input and prints output"
-  note for LookupItem "CRUD lookup tables: GenericDAO insert / findAll / findById / update / delete\nrows still in use cannot be deleted (LookupController.isInUse)"
+  note for LookupItem "CRUD lookup tables: GenericDAO insert / findAll / findById / update / delete<br>rows still in use cannot be deleted (LookupController.isInUse)"
 ```
+
+</details>

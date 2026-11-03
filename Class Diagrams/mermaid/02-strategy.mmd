@@ -2,7 +2,7 @@
 title: Strategy Pattern - Payment, Notification Channel and Impact Evaluation
 ---
 classDiagram
-  direction TB
+  direction LR
   class Channel {
     <<enumeration>>
     EMAIL
@@ -128,6 +128,6 @@ classDiagram
   DonationController ..> PaymentStrategy : chooses strategy
   BeneficiaryController ..> ImpactEvaluationStrategy : chooses strategy
 
-  note for PaymentStrategy "Strategy 1 - payment\nContext: MonetaryDonation\n(setPaymentStrategy at runtime)"
-  note for NotificationStrategy "Strategy 2 - communication channel\nContext: NotificationService picks the\nstrategy from each recipient's preferred channel"
-  note for ImpactEvaluationStrategy "Strategy 3 - impact evaluation\nContext: ImpactEvaluator (setStrategy)"
+  note for PaymentStrategy "Strategy 1 - payment<br>Context: MonetaryDonation<br>(setPaymentStrategy at runtime)"
+  note for NotificationStrategy "Strategy 2 - communication channel<br>Context: NotificationService picks the<br>strategy from each recipient's preferred channel"
+  note for ImpactEvaluationStrategy "Strategy 3 - impact evaluation<br>Context: ImpactEvaluator (setStrategy)"

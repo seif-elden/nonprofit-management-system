@@ -2,7 +2,7 @@
 title: Factory Method Pattern - Creating Donations and Events
 ---
 classDiagram
-  direction TB
+  direction LR
   class Donation {
     <<abstract>>
     -id: int
@@ -156,7 +156,7 @@ classDiagram
   WorkshopCreator ..> Workshop : «create»
   OutreachCreator ..> Outreach : «create»
 
-  note for DonationHandler "Creator: receiveDonation() = common workflow\ncreateDonation() = factory method"
-  note for EventCreator "Creator: openEvent() = common workflow\ncreateEvent() = factory method"
+  note for DonationHandler "Creator: receiveDonation() = common workflow<br>createDonation() = factory method"
+  note for EventCreator "Creator: openEvent() = common workflow<br>createEvent() = factory method"
   note for Donation "Product"
   note for Event "Product"

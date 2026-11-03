@@ -2,7 +2,7 @@
 title: Observer Pattern - Donations, Events and Distributions
 ---
 classDiagram
-  direction TB
+  direction LR
   class NotificationService {
     -strategies: Map~Channel, NotificationStrategy~
     -strategy: NotificationStrategy
@@ -123,6 +123,6 @@ classDiagram
   ActivityLog ..> Subject : watch()
 
   note for Subject "Subject (publisher)"
-  note for Observer "Observer (subscriber)\nupdate(source, change)"
-  note for DonationService "Concrete Subjects\nevery change -> notifyObservers(new ChangeEvent(...))"
-  note for ActivityLog "Concrete Observers subscribe themselves\n(constructor or watch() calls subject.addObserver(this))"
+  note for Observer "Observer (subscriber)<br>update(source, change)"
+  note for DonationService "Concrete Subjects<br>every change -> notifyObservers(new ChangeEvent(...))"
+  note for ActivityLog "Concrete Observers subscribe themselves<br>(constructor or watch() calls subject.addObserver(this))"

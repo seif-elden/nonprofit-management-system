@@ -2,7 +2,7 @@
 title: MVC Architecture and CRUD Lookup Tables
 ---
 classDiagram
-  direction TB
+  direction LR
   class GenericDAO~T~ {
     -tableName: String
     -items: List~T~
@@ -214,4 +214,4 @@ classDiagram
   LookupController ..> LookupItem : edits rows
 
   note for View "View: the only layer that reads input and prints output"
-  note for LookupItem "CRUD lookup tables: GenericDAO insert / findAll / findById / update / delete\nrows still in use cannot be deleted (LookupController.isInUse)"
+  note for LookupItem "CRUD lookup tables: GenericDAO insert / findAll / findById / update / delete<br>rows still in use cannot be deleted (LookupController.isInUse)"

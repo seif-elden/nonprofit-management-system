@@ -79,4 +79,4 @@ classDiagram
   LookupController --> "1" DatabaseManager : db
   LookupController ..> GenericDAO : CRUD
 
-  note for DatabaseManager "Singleton\nprivate constructor: no 'new DatabaseManager()' outside\nstatic instance holds the only object\nsynchronized getInstance(): creates it once (lazy)\nand returns the same instance afterwards"
+  note for DatabaseManager "Singleton<br>private constructor: no 'new DatabaseManager()' outside<br>static instance holds the only object<br>synchronized getInstance(): creates it once (lazy)<br>and returns the same instance afterwards"
